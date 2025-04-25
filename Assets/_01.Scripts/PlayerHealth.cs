@@ -58,6 +58,8 @@ public class PlayerHealth : LivingEntity
             // 사망하지 않은 경우에만 효과음 재생
             playerAudio.PlayOneShot(hitClip);
         }
+        
+        Debug.Log("데미지 : "+damage);
         //LivingEntity의 OnDamage() 실행 (대미지 적용)
         base.OnDamage(damage, hitPoint, hitNormal);
         // 갱신된 체력을 체력 슬라이더에 반영

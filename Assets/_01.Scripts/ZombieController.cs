@@ -115,6 +115,16 @@ public class ZombieController : LivingEntity
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
         // LivingEntity의 OnDamage() 를 실행하여 대미지 적용
+        if (!dead)
+        {
+            //공격받은 지점과 방향으로 파티클 효과 재생
+            hitEffect.transform.position = hitPoint;
+            hitEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
+            hitEffect.Play();
+            
+            //좀비 픽격음 재생
+            zombieAudioSource.PlayOneShot(hitSound);
+        }
         base.OnDamage(damage, hitPoint, hitNormal);
     }
 
@@ -122,10 +132,47 @@ public class ZombieController : LivingEntity
     {
         //LivingEntity 의 Die()실행 하여 기본 사망처리 진행
         base.Die();
+        
+        //다른 ai를 방해하지 않도록 자신의 모든 콜라이더를 비활성화
+        Collider[] zombieColliders = GetComponents<Collider>();
+        foreach (Collider col in zombieColliders)
+        {
+            col.enabled = false;
+        }
+        
+        
+        //ai추적을 중지하고 내비메시 컴포넌트 비활성화
+        navMeshAgent.isStopped = true;
+        navMeshAgent.enabled = false;
+        
+        //사망애니메이션 실행
+        zombieAnimator.SetTrigger("Die");
+        // 사망 효과음 재생
+        zombieAudioSource.PlayOneShot(deathSound);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         //트리거 충돌한 상대방 오브젝트가 추적대상이라면 공격실행
+        //자신이 사망하지 않고
+        //최근 공격 시점에서 timeBetAttack 이상 시간이 지났다면
+        if (!dead && Time.time >= lastAttackTime + timeBetweenAttacks)
+        {
+            //상대방의 LivingEntity 타입 가져오기 시도
+            LivingEntity attackTarget = other.GetComponent<LivingEntity>();
+            //상대방의 LivingEntity가 자신의 추적 대상이라면 공격실행
+            if (attackTarget != null && attackTarget == targetEntity)
+            {
+                //최근 공격시간 갱신
+                lastAttackTime = Time.time;
+                
+                //상대방의 피격위치와 피격 방향을 근삿값으로 계산
+                Vector3 hitPoint = other.ClosestPoint(transform.position);
+                Vector3 hitNomal = transform.position - other.transform.position;
+                
+                //공격실행
+                attackTarget.OnDamage(damage, hitPoint, hitNomal);
+            }
+        }
     }
 }

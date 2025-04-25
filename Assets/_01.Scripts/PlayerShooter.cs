@@ -19,6 +19,7 @@ public class PlayerShooter : MonoBehaviour
         //사용할 검포넌트 가져오기
         playerInput = GetComponent<PlayerInput>();
         playerAnimator = GetComponent<Animator>();
+        
     }
 
     private void OnEnable()
@@ -61,7 +62,7 @@ public class PlayerShooter : MonoBehaviour
         if (gun != null && UIManager.instance != null)
         {
             //UI 매니저의 탄알 텍스트에 탄창의 탄알과 남은 ㅊ전체 탄알 표시
-            UIManager.instance.UpdataeAmmoText(gun.magAmmo, gun.ammoRemain);
+            UIManager.instance.UpdateAmmoText(gun.magAmmo, gun.ammoRemain);
         }
     }
 
