@@ -26,7 +26,7 @@ public class Gun : MonoBehaviour
 
     public GunData gunData; // 총 현재 데이터
     
-    private float fireDistance; //사정거리
+    private float fireDistance = 10f; //사정거리
     
     public int ammoRemain; // 현재 탄장에 남아 있는 탄알
     public int magAmmo; // 현재 탄창에 남아있는 탄알
@@ -185,7 +185,7 @@ public class Gun : MonoBehaviour
         magAmmo += ammoToFill;
         //남은 탄알에서 탄창을 채운만큼 탄알을 뺌
         ammoRemain -= ammoToFill;
-        
+        UIManager.instance.ammoText.text = magAmmo + "/" + ammoRemain;
         // 총의 현재 상태를 발사 준비된 상태로 변경
         state = State.Ready;
     }
