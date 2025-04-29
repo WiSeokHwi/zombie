@@ -42,7 +42,7 @@ public class PlayerShooter : MonoBehaviour
         {
             // 총을 쏘는 함수 호출
             gun.Fire();
-            UpdateUI();
+            
         }
         // 재장전 입력 감지
         if (playerInput.reload)
@@ -55,6 +55,7 @@ public class PlayerShooter : MonoBehaviour
             }
            
         }
+        UpdateUI();
     }
 
     private void UpdateUI()
